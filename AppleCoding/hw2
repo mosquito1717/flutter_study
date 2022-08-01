@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp ({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          backgroundColor: Color(0xffffffff),
+          leading: Row(
+            children: [
+              TextButton(
+                onPressed: null,
+                child:Text('금호동3가',
+                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)
+                  ),
+              ),
+              IconButton(icon: Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black), onPressed: null),
+            ],
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+            ), onPressed: null),
+            IconButton(icon: Icon(Icons.density_medium_rounded, color: Colors.black), onPressed: null),
+            IconButton(icon: Icon(Icons.notifications_none_rounded, color: Colors.black), onPressed: null),
+          ]
+        ),
+        body: Container(
+          height: 200,
+          width: 600,
+          padding: EdgeInsets.all(15),
+          child: Row(
+            children: [
+              Container(
+                  height:200,
+                  width: 200,
+                  child: Image.asset('cat.jpeg',height:200, width: 200)),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('카메라', style: TextStyle(fontSize:25,fontWeight:FontWeight.bold)),
+                        Text('성동구 행당동', style: TextStyle(fontSize:10, color: Colors.grey)),
+                        Text('210,000원', style: TextStyle(fontSize:15)),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(Icons.favorite, color: Colors.grey),
+                              Text('4', style: TextStyle(color: Colors.grey))
+                            ],
+                          ),
+                        )
+                      ]
+                  ),
+                )
+                //padding: EdgeInsets.all(15),
+
+              )
+            ],
+          )
+        )
+      ),
+    );
+  }
+}
+
