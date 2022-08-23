@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:contacts_service/contacts_service.dart';
+
+void main() {
+  runApp(MaterialApp(
+      home:MyApp()));
+}
+
+class MyApp extends StatefulWidget {
+  MyApp ({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  getPermission() async {
+    var status = await Permission.contacts.status;
+    if (status.isGranted) {
+      print('허락됨');
+      var contacts = await ContactsService.getContacts();
+      //print(contacts[0].givenName);
+
+      setState((){
+        name = contacts;
+      });
+    } else if (status.isDenied) {
+      print('거절됨');
+      Permission.contacts.request(); // 팝업창 띄우기
+      openAppSettings(); // setting 화면
+    }
+  }
+  // 시작하자마자 뭐 띄우기
+  // @override
+  // void initState(){
+  //   super.initState();
+  //   getPermission();
+  // }
+
+  var a = 1;
+  var total = 3;
+  var name = [];
+
+  var like = [0, 0, 0];
+
+  addName(a){
+    setState((){name.add(a);});
+  }
+  addLike(){
+    setState((){like.add(0);});
+  }
+  addOne(){
+    setState((){
+      total++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            showDialog(context: context, builder: (context){
+              return PopUp(addOne: addOne, addName: addName, addLike: addLike);
+            });
+          }
+        ),
+        appBar: AppBar(
+          title: Text(total.toString()),
+          actions:[
+            IconButton(onPressed: (){getPermission();}, icon: Icon(Icons.contacts))
+          ]
+        ),
+        body: ListView.builder(
+          itemCount: name.length,
+          itemBuilder: (c, i) {
+            return ListTile(
+                leading: Text(like[i].toString()),
+                title: Text(name[i].givenName),
+            trailing: ElevatedButton( style: ElevatedButton.styleFrom(primary: Colors.blue, onPrimary: Colors.white,),
+            onPressed: (){setState(() {
+              like[i]++;
+            });}, child: Text('좋아요')));
+          }
+      ));
+  }
+}
+
+class PopUp extends StatelessWidget {
+  PopUp({Key? key, this.addOne, this.addName, this.addLike}) : super(key: key);
+  final addOne;
+  final addName;
+  final addLike;
+  var inputData = TextEditingController();
+  var inputData2 = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: SizedBox(
+          width: 300,
+            height: 200,
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text('Contact', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Padding(
+                padding: const EdgeInsets.only(right:20.0, left: 20.0),
+                child: TextField(controller: inputData,),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: TextButton(onPressed: (){Navigator.pop(context);}, child: Text('Cancel', style: TextStyle(color: Colors.blue))),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: TextButton(onPressed: (){
+                      addOne();
+                      addName(inputData.text);
+                      addLike();
+                      var newContact = Contact();
+                      newContact.givenName = inputData.text;
+                      ContactsService.addContact(newContact);
+                      }, child: Text('OK', style: TextStyle(color: Colors.blue))),
+                  )
+                ]
+              )
+            ],
+          ))
+    );
+  }
+}
+
